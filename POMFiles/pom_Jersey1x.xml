@@ -1,0 +1,279 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<!-- pom_Jersey2x.xml -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.github.glassfish.jersey</groupId>
+    <artifactId>JerseyGlassFishWebService</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>JerseyGlassFishWebService</name>
+
+	<properties>
+		<common.config.profile.directory>profileConfig/common</common.config.profile.directory>
+		<maven.compiler.source>1.8</maven.compiler.source> <!-- 1.7 | 8 -->
+		<maven.compiler.target>1.8</maven.compiler.target>
+		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- https://eclipse-ee4j.github.io/jersey/ 2.19, 2.34-->
+		<jersey2.version>2.19</jersey2.version>
+		<jaxrs.version>2.0.1</jaxrs.version>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<war.projectname.suffix>dev</war.projectname.suffix>
+				<config.profile.directory>profileConfig/dev</config.profile.directory>
+				<environment>DEV</environment>
+				
+				<pom.profile.log4j.mail.SMTPHOST></pom.profile.log4j.mail.SMTPHOST>
+				<pom.profile.log4j.mail.from></pom.profile.log4j.mail.from>
+				<pom.profile.log4j.mail.to></pom.profile.log4j.mail.to>
+				<pom.profile.log4j.mail.subject></pom.profile.log4j.mail.subject>
+			</properties>
+		</profile>
+		<profile>
+			<id>int</id>
+			<properties>
+				<war.projectname.suffix>int</war.projectname.suffix>
+				<config.profile.directory>profileConfig/int</config.profile.directory>
+				<environment>INT</environment>
+				
+				<pom.profile.log4j.mail.SMTPHOST></pom.profile.log4j.mail.SMTPHOST>
+				<pom.profile.log4j.mail.from></pom.profile.log4j.mail.from>
+				<pom.profile.log4j.mail.to></pom.profile.log4j.mail.to>
+				<pom.profile.log4j.mail.subject></pom.profile.log4j.mail.subject>
+			</properties>
+		</profile>
+	</profiles>
+	
+    <build>
+    
+    	<resources>
+		<resource>
+			<directory>${config.profile.directory}</directory>
+		</resource>
+		<resource>
+			<directory>${basedir}/src/main/resources</directory>
+		</resource>
+			<resource>
+		<directory>src/main/resources</directory>
+			<filtering>false</filtering>
+		</resource>
+	</resources>
+	
+	<finalName>JerseyGlassFishWebService</finalName>
+    <sourceDirectory>src</sourceDirectory>
+		
+	<pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+    
+		<plugins>
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+                <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
+            </configuration>
+            
+            <!-- <configuration> 3.7.0
+					<source>1.8</source>
+					<target>1.8</target>
+					<verbose>true</verbose>
+					<optimize>true</optimize>
+					<showDeprecation>false</showDeprecation>
+					<showWarnings>true</showWarnings>
+
+					<compilerVersion>1.8</compilerVersion>
+					<compilerArgument>-XDignore.symbol.file</compilerArgument>
+				</configuration> -->
+        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
+					<classifier>${war.projectname.suffix}</classifier>
+					<webResources>
+						<resource> <!-- Common resources for all environments (OR) directly we can place in resources folder -->
+							<directory>${common.config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>*.properties</include> <!-- **/**/*.properties -->
+								<include>*.xml</include> <!-- context.xml : we can skip this  -->
+							</includes>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>META-INF</targetPath>
+							<includes>
+								<include>ReadMe.txt</include>
+								<include>context.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			<!-- <plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${config.profile.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>log4j.properties</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+		</plugins>
+    </build>
+
+    <dependencies>
+<!--
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+-->
+<!-- JAX-RS -->
+<dependency>
+    <groupId>javax.ws.rs</groupId>
+    <artifactId>javax.ws.rs-api</artifactId>
+    <version>${jaxrs.version}</version>
+</dependency>
+<!-- Jersey 2.19 Server -->
+<dependency>
+    <groupId>org.glassfish.jersey.containers</groupId>
+    <artifactId>jersey-container-servlet</artifactId>
+    <version>${jersey2.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-server</artifactId>
+    <version>${jersey2.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-client</artifactId>
+    <version>${jersey2.version}</version>
+</dependency>
+
+<!-- Jersey Client -->
+<dependency>
+	<groupId>org.glassfish.jersey.connectors</groupId>
+	<artifactId>jersey-apache-connector</artifactId>
+	<version>2.25.1</version>
+</dependency>
+<dependency>
+	<groupId>org.glassfish.jersey.inject</groupId>
+	<artifactId>jersey-hk2</artifactId>
+	<version>2.26</version>
+</dependency>
+
+<!-- https://search.maven.org/search?q=fc:org.glassfish.jersey.logging.LoggingFeature -->
+<!-- org.glassfish.jersey.logging.LoggingFeature -->
+<dependency>
+    <groupId>org.glassfish.jersey.bundles</groupId>
+    <artifactId>jaxrs-ri</artifactId>
+    <version>2.25</version>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-common</artifactId>
+    <version>2.25</version>
+</dependency>
+
+<!-- java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException : 
+https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception
+ -->
+<!-- API, java.xml.bind module -->
+<dependency>
+    <groupId>jakarta.xml.bind</groupId>
+    <artifactId>jakarta.xml.bind-api</artifactId>
+    <version>2.3.2</version>
+</dependency>
+<!-- Runtime, com.sun.xml.bind module -->
+<dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.2</version>
+</dependency>
+
+
+<!-- fasterxml : Map to JSON and back -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>
+
+<!-- LOG -->
+<!-- On removing log4jjar. Log is displaying in red color -->
+<!-- <dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+</dependency> -->
+<dependency>
+	<groupId>commons-logging</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.1.1</version>
+</dependency>
+<dependency>
+	<groupId>commons-lang</groupId>
+	<artifactId>commons-lang</artifactId>
+	<version>2.6</version>
+</dependency>
+
+<!-- java.lang.ClassNotFoundException: javax.xml.bind.JAXBContext -->
+<!-- API, java.xml.bind module -->
+<dependency>
+    <groupId>jakarta.xml.bind</groupId>
+    <artifactId>jakarta.xml.bind-api</artifactId>
+    <version>2.3.2</version>
+</dependency>
+<!-- Runtime, com.sun.xml.bind module -->
+<dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.2</version>
+</dependency>
+    </dependencies>
+
+</project>

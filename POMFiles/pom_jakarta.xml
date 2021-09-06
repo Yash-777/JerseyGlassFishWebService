@@ -1,0 +1,198 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.github.glassfish.jersey</groupId>
+    <artifactId>JerseyGlassFishWebService</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>JerseyGlassFishWebService</name>
+
+	<properties>
+		<common.config.profile.directory>profileConfig/common</common.config.profile.directory>
+		<maven.compiler.source>1.8</maven.compiler.source> <!-- 1.7 | 8 -->
+		<maven.compiler.target>1.8</maven.compiler.target>
+		
+		<!-- 3.0.2: java.lang.NoClassDefFoundError: jakarta/servlet/Filter
+		2.26 -->
+		<glassfish.jersey.version>3.0.2</glassfish.jersey.version>
+		<sun.jersey.version>1.9.1</sun.jersey.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<war.projectname.suffix>dev</war.projectname.suffix>
+				<config.profile.directory>profileConfig/dev</config.profile.directory>
+				<environment>DEV</environment>
+			</properties>
+		</profile>
+		<profile>
+			<id>int</id>
+			<properties>
+				<war.projectname.suffix>int</war.projectname.suffix>
+				<config.profile.directory>profileConfig/int</config.profile.directory>
+				<environment>INT</environment>
+			</properties>
+		</profile>
+	</profiles>
+	
+    <build>
+    
+    	<resources>
+		<resource>
+			<directory>${config.profile.directory}</directory>
+		</resource>
+		<resource>
+			<directory>${basedir}/src/main/resources</directory>
+		</resource>
+			<resource>
+		<directory>src/main/resources</directory>
+			<filtering>false</filtering>
+		</resource>
+	</resources>
+	
+	<finalName>JerseyGlassFishWebService</finalName>
+    <sourceDirectory>src</sourceDirectory>
+		
+	<pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+    
+		<plugins>
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+                <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
+            </configuration>
+            
+            <!-- <configuration> 3.7.0
+					<source>1.8</source>
+					<target>1.8</target>
+					<verbose>true</verbose>
+					<optimize>true</optimize>
+					<showDeprecation>false</showDeprecation>
+					<showWarnings>true</showWarnings>
+
+					<compilerVersion>1.8</compilerVersion>
+					<compilerArgument>-XDignore.symbol.file</compilerArgument>
+				</configuration> -->
+        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
+					<classifier>${war.projectname.suffix}</classifier>
+					<webResources>
+						<resource> <!-- Common resources for all environments (OR) directly we can place in resources folder -->
+							<directory>${common.config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>*.properties</include> <!-- **/**/*.properties -->
+								<include>*.xml</include> <!-- context.xml : we can skip this  -->
+							</includes>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>META-INF</targetPath>
+							<includes>
+								<include>ReadMe.txt</include>
+								<include>context.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			<!-- <plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${config.profile.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>log4j.properties</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+		</plugins>
+    </build>
+
+    <dependencies>
+<dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>3.8.1</version>
+	<scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>javax.servlet</groupId>
+	<artifactId>javax.servlet-api</artifactId>
+	<version>3.0.1</version>
+	<scope>provided</scope>
+</dependency>
+<dependency>
+	<groupId>com.oracle</groupId>
+	<artifactId>ojdbc6</artifactId>
+	<version>11.2.0.3</version>
+	<scope>provided</scope>
+</dependency>
+<dependency>
+	<groupId>commons-io</groupId>
+	<artifactId>commons-io</artifactId>
+	<version>2.2</version>
+</dependency>
+<dependency>
+	<groupId>xalan</groupId>
+	<artifactId>xalan</artifactId>
+	<version>2.7.1</version>
+</dependency>
+<dependency>
+	<groupId>commons-codec</groupId>
+	<artifactId>commons-codec</artifactId>
+	<version>1.6</version>
+</dependency>
+
+
+
+	
+    </dependencies>
+
+</project>

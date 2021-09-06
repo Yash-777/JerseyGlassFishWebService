@@ -1,0 +1,409 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<!-- pom_Jersey2x.xml -->
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.github.glassfish.jersey</groupId>
+	<artifactId>JerseyGlassFishWebService</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>JerseyGlassFishWebService</name>
+
+	<properties>
+		<common.config.profile.directory>profileConfig/common</common.config.profile.directory>
+		<maven.compiler.source>1.8</maven.compiler.source> <!-- 1.7 | 8 -->
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- https://eclipse-ee4j.github.io/jersey/ 2.19, 2.34 -->
+		<jersey2.version>2.19</jersey2.version>
+		<jaxrs.version>2.0.1</jaxrs.version>
+	</properties>
+
+	<repositories>
+		<!-- Repository for ORACLE JDBC Driver -->
+		<repository>
+			<id>codelds</id>
+			<url>https://code.lds.org/nexus/content/groups/main-repo</url>
+		</repository>
+
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<war.projectname.suffix>dev</war.projectname.suffix>
+				<config.profile.directory>profileConfig/dev</config.profile.directory>
+				<environment>DEV</environment>
+
+				<pom.profile.log4j.mail.SMTPHOST></pom.profile.log4j.mail.SMTPHOST>
+				<pom.profile.log4j.mail.from></pom.profile.log4j.mail.from>
+				<pom.profile.log4j.mail.to></pom.profile.log4j.mail.to>
+				<pom.profile.log4j.mail.subject></pom.profile.log4j.mail.subject>
+			</properties>
+		</profile>
+		<profile>
+			<id>int</id>
+			<properties>
+				<war.projectname.suffix>int</war.projectname.suffix>
+				<config.profile.directory>profileConfig/int</config.profile.directory>
+				<environment>INT</environment>
+
+				<pom.profile.log4j.mail.SMTPHOST></pom.profile.log4j.mail.SMTPHOST>
+				<pom.profile.log4j.mail.from></pom.profile.log4j.mail.from>
+				<pom.profile.log4j.mail.to></pom.profile.log4j.mail.to>
+				<pom.profile.log4j.mail.subject></pom.profile.log4j.mail.subject>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+
+		<resources>
+			<resource>
+				<directory>${config.profile.directory}</directory>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+
+		<finalName>JerseyGlassFishWebService</finalName>
+		<sourceDirectory>src</sourceDirectory>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.12.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+
+				<!-- <configuration> 3.7.0 <source>1.8</source> <target>1.8</target> 
+					<verbose>true</verbose> <optimize>true</optimize> <showDeprecation>false</showDeprecation> 
+					<showWarnings>true</showWarnings> <compilerVersion>1.8</compilerVersion> 
+					<compilerArgument>-XDignore.symbol.file</compilerArgument> </configuration> -->
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
+					<classifier>${war.projectname.suffix}</classifier>
+					<webResources>
+						<resource> <!-- Common resources for all environments (OR) directly we can place in 
+								resources folder -->
+							<directory>${common.config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+								<include>*.properties</include> <!-- **/**/*.properties -->
+								<include>*.xml</include> <!-- context.xml : we can skip this -->
+							</includes>
+						</resource>
+						<resource>
+							<directory>${config.profile.directory}</directory>
+							<targetPath>META-INF</targetPath>
+							<includes>
+								<include>ReadMe.txt</include>
+								<include>context.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+
+			<!-- <plugin> <artifactId>maven-resources-plugin</artifactId> <executions> 
+				<execution> <id>copy-resources</id> <phase>validate</phase> <goals> <goal>copy-resources</goal> 
+				</goals> <configuration> <outputDirectory>${config.profile.directory}</outputDirectory> 
+				<resources> <resource> <directory>src/main/resources</directory> <includes> 
+				<include>log4j.properties</include> </includes> <filtering>true</filtering> 
+				</resource> </resources> </configuration> </execution> </executions> </plugin> -->
+		</plugins>
+	</build>
+
+	<dependencies>
+	<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+<dependency>
+    <groupId>com.googlecode.json-simple</groupId>
+    <artifactId>json-simple</artifactId>
+    <version>1.1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.apache.ws.commons.util/ws-commons-util -->
+<dependency>
+  <groupId>org.apache.ws.commons.util</groupId>
+  <artifactId>ws-commons-util</artifactId>
+  <version>1.0.2</version>
+  <exclusions>
+    <exclusion>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+
+<!-- Java Mail --> 
+<dependency>
+	<groupId>org.bouncycastle</groupId>
+	<artifactId>bcpkix-jdk15on</artifactId>
+	<version>1.58</version>
+</dependency>
+<dependency>
+	<groupId>org.bouncycastle</groupId>
+	<artifactId>bcmail-jdk15on</artifactId>
+	<version>1.58</version>
+</dependency>
+<dependency>
+	<groupId>org.bouncycastle</groupId>
+	<artifactId>bcprov-ext-jdk15on</artifactId>
+	<version>1.58</version>
+</dependency>
+<!-- javax.servlet.ServletException: org.glassfish.jersey.server.ContainerException: java.lang.NoClassDefFoundError: org/bouncycastle/jce/provider/BouncyCastleProvider -->
+<dependency>
+	<groupId>org.bouncycastle</groupId>
+	<artifactId>bcprov-jdk15on</artifactId><!--  bcprov-jdk16[1.46] -->
+	<version>1.58</version>
+</dependency>
+
+<!-- import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException; -->
+<dependency>
+    <groupId>ch.astorm</groupId>
+    <artifactId>jotlmsg</artifactId>
+    <version>1.7</version>
+    <exclusions>
+            <exclusion>
+                <groupId>javax.mail</groupId>
+    			<artifactId>javax.mail-api</artifactId>
+    			<!-- <version>1.6.2</version> -->
+            </exclusion>
+            <exclusion>
+	            <groupId>javax.activation</groupId>
+				<artifactId>activation</artifactId>
+				<!-- <version>1.1.1</version> -->
+			</exclusion>
+        </exclusions>
+</dependency>
+
+<!-- NoClassDefFoundError: com/sun/mail/util/MailLogger -->
+<dependency>
+    <groupId>com.sun.mail</groupId>
+    <artifactId>javax.mail</artifactId>
+    <version>1.6.2</version>
+    <scope>provided</scope>
+    <exclusions>
+          <exclusion>
+           <groupId>javax.activation</groupId>
+		<artifactId>activation</artifactId>
+		<!-- <version>1.1.1</version> -->
+		</exclusion>
+    </exclusions>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.pdfbox</groupId> 
+	<artifactId>pdfbox</artifactId>
+	<version>2.0.8</version>
+</dependency>
+
+<dependency>
+	<groupId>net.markenwerk</groupId>
+	<artifactId>utils-mail-smime</artifactId>
+	<version>1.0.8</version>
+</dependency>
+<!--  =======.mail package ======== -->
+
+<!-- FTP -->
+<!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+<dependency>
+    <groupId>com.jcraft</groupId>
+    <artifactId>jsch</artifactId>
+    <version>0.1.54</version>
+</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r05</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc10</artifactId>
+			<version>19.10.0.0</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.tomcat</groupId> <artifactId>tomcat-dbcp</artifactId> 
+			<version>9.0.10</version> <scope>provided</scope> </dependency> -->
+
+		<!-- import javax.ws.rs.POST; import javax.ws.rs.Path; -->
+		<!-- JAX-RS -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${jaxrs.version}</version>
+		</dependency>
+		<!-- Jersey 2.19 Server -->
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>${jersey2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>${jersey2.version}</version>
+		</dependency>
+
+		<!-- Jersey Client -->
+		<dependency>
+			<groupId>org.glassfish.jersey.connectors</groupId>
+			<artifactId>jersey-apache-connector</artifactId>
+			<version>2.25.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.26</version>
+		</dependency>
+
+		<!-- https://search.maven.org/search?q=fc:org.glassfish.jersey.logging.LoggingFeature 
+			https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>2.23.2</version>
+		</dependency>
+
+
+		<!-- java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException : https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception -->
+		<!-- API, java.xml.bind module -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+		<!-- Runtime, com.sun.xml.bind module -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+
+
+		<!-- fasterxml : Map to JSON and back -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.12.3</version>
+		</dependency>
+
+		<!-- LOG -->
+		<!-- On removing log4jjar. Log is displaying in red color -->
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>1.2.17</version> </dependency> -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<!-- GZIP -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.20</version>
+		</dependency>
+
+		<!-- org.apache.xpath.XPathAPI -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+		<dependency> <!-- net.sf.saxon.TransformerFactoryImpl -->
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>9.7.0-15</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+<dependency>
+    <groupId>joda-time</groupId>
+    <artifactId>joda-time</artifactId>
+    <version>2.10.10</version>
+</dependency>
+		
+	</dependencies>
+
+</project>

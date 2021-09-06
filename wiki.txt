@@ -1,0 +1,205 @@
+#### [JAX-RS Application, Resources and Sub-Resources](https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/jaxrs-resources.htm), [Stack Exchange API v2.30](https://api.stackexchange.com/docs) with REST paths
+
+https://stackoverflow.com/questions/11552248/when-to-use-queryparam-vs-pathparam
+/depatments/{dept}/employees/{id}?version=12
+
+Jakarta Runtime Client Examples: https://jakarta.ee/specifications/restful-ws/3.0/jakarta-restful-ws-spec-3.0.html#client-runtime
+Response res = client.target("http://example.org/hello")
+    .queryParam("MyParam","...")
+    .request("text/plain")
+    .header("MyHeader", "...")
+    .get();
+
+WebTarget base = client.target("http://example.org/");
+WebTarget hello = base.path("hello").path("{whom}");
+Response res = hello.resolveTemplate("whom", "world").request("...").get();
+
+@GET @Produces("text/plain")
+public String listQueryParamNames(@Context UriInfo info) {
+    StringBuilder buf = new StringBuilder();
+    for (String param: info.getQueryParameters().keySet()) {
+        buf.append(param);
+        buf.append("\n");
+    }
+    return buf.toString();
+}
+
+> # ----- ===== ----- @Path
+@Path may be used on classes and such classes are referred to as root resource classes. @Path may also be used on methods of root resource classes. This enables common functionality for a number of resources to be grouped together and potentially reused.
+
+The first way @Path may be used is on resource methods and such methods are referred to as sub-resource methods. 
+
+The @Path annotation's value is a relative URI path. What makes JAX-RS so useful is that you can embed variables in the URIs.
+
+URI path templates are URIs with variables embedded within the URI syntax. These variables are substituted at runtime in order for a resource to respond to a request based on the substituted URI. Variables are denoted by curly braces.
+
+@Path("/users/{username}")
+
+> # ----- ===== ----- @PathParam("username") : Extracts the value of a URI template parameter.
+The extraction of template variable values via @PathParam or UriInfo.getPathParameters.
+[when it is a mandatory item such as an Id]
+
+
+@Path("/users/{username}")
+public class UserResource {
+    @GET @Produces("text/xml")
+    public String getUser(@PathParam("username") String userName) { ... }
+}
+
+@GET @Path("/ids/{printerid}")
+@Produces({"application/json", "application/xml"})
+public Printer getPrinter(@PathParam("printerid") String printerId) { ... }
+
+
+> # ----- ===== ----- @QueryParam, @DefaultValue : Extracts the value of a URI query parameter.
+[when you have the exact resource but need to filter that on some optional traits such as color, size, etc.]
+
+@QueryParam is used to extract query parameters from the Query component of the request URL.
+
+@Path("smooth") @GET
+public Response smooth(
+    @DefaultValue("2") @QueryParam("step") int step,
+    ...
+}
+
+If a query parameter "step" exists in the query component of the request URI then the "step" value will be extracted and parsed as a 32 bit signed integer and assigned to the step method parameter. If "step" does not exist then a default value of 2, as declared in the @DefaultValue annotation, will be assigned to the step method parameter. If the "step" value cannot be parsed as a 32 bit signed integer then a HTTP 404 (Not Found) response is returned.
+
+if the @DefaultValue is not used in conjunction with @QueryParam and the query parameter is not present in the request then value will be the default value ot Type.
+
+========================================================================================================================
+
+http://localhost:8080/JerseyGlassFishWebService/jersey1/sayhello/github/query?account2=stackoverflow
+http://localhost:8080/JerseyGlassFishWebService/jersey2/glassfish/sayhello/github/query?account2=stackoverflow
+
+Jakarta RESTful Web Services : https://jakarta.ee/specifications/restful-ws/3.0/jakarta-restful-ws-spec-3.0.html
+
+/glassfish/jersey/* : https://stackoverflow.com/a/30020830/5081877
+
+Go to File → New → Other
+In the dialog, select the Maven file the Maven Project, then Next
+In the next dialog keep all the defaults, and hit Next
+In this next dialog we will select the Maven archetype. In the search box, type jersey-quickstart-webapp. 
+
+org.glassfish.jersey.archetypes - Choose latest version
+
+org.github.glassfish.jersey
+JerseyGlassFishWebService
+org.github.glassfish.jersey.JerseyGlassFishWebService
+
+
+Tomcat: https://github.com/Yash-777/tomcat/archive/refs/tags/TOMCAT_8_0_0.zip
+
+JSON Services:
+https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY
+https://api.stackexchange.com/docs
+
+-------------------------------------------------------------------------------------------- Jersey 1.9
+# java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException : 
+# java.lang.ClassNotFoundException: javax.xml.bind.JAXBContext
+# SEVERE: StandardWrapper.Throwable java.lang.TypeNotPresentException: Type javax.xml.bind.JAXBContext not present
+https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception
+
+<!-- API, java.xml.bind module -->
+<dependency>
+    <groupId>jakarta.xml.bind</groupId>
+    <artifactId>jakarta.xml.bind-api</artifactId>
+    <version>2.3.2</version>
+</dependency>
+
+<!-- Runtime, com.sun.xml.bind module -->
+<dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.2</version>
+</dependency>
+
+--------------------------------------------------------------------------------------------
+
+# java.lang.IllegalStateException: InjectionManagerFactory not found.  ? We Used: 2.34
+
+Jersey 2.26 and newer are not backward compatible with older versions. ! Changed to 2.19
+
+
+# org.glassfish.jersey.server.model.ModelValidationException: Validation of the application resource model has failed during application initialization.
+[[FATAL] A resource model has ambiguous (sub-)resource method for HTTP method GET and input mime-types as defined by"@Consumes" and "@Produces" annotations at Java methods public javax.ws.rs.core.Response org.github.glassfish.jersey.JerseyGlassFishWebService.HelloWorldService.sayHello_QueryParam(java.lang.String) and public javax.ws.rs.core.Response org.github.glassfish.jersey.JerseyGlassFishWebService.HelloWorldService.sayHello_PathQueryParam(java.lang.String,java.lang.String) at matching regular expression /sayhello. These two methods produces and consumes exactly the same mime-types and therefore their invocation as a resource methods will always fail.; source='org.glassfish.jersey.server.model.RuntimeResource@3e369a92']
+
+Error:
+@GET
+@Path("/{account}")
+public Response sayHello_PathQueryParam(@PathParam("account") String github, @QueryParam("account2") String stackOverflow) {
+    String output = "Hello, Your Accouts lsit [" + github + " and "+stackOverflow+"]!";
+    return Response.status(200).entity(output).build();
+}
+
+Solution:
+@GET
+@Path("/{account}/query")
+public Response sayHello_PathQueryParam(@PathParam("account") String github, @QueryParam("account2") String stackOverflow) {
+    String output = "Hello, Your Accouts lsit [" + github + " and "+stackOverflow+"]!";
+    return Response.status(200).entity(output).build();
+}
+
+
+-------------------------------------------- Enabling Jersey LOG https://stackoverflow.com/questions/6860661/jersey-print-the-actual-request
+### client.register(new org.glassfish.jersey.filter.LoggingFilter()); // Jersey 2x
+
+Jul 13, 2021 4:13:11 PM org.glassfish.jersey.filter.LoggingFilter log
+INFO: 1 * Sending client request on thread main
+1 > GET https://api.stackexchange.com/2.2/users/581877?order=desc&sort=reputation&site=stackoverflow
+1 > Accept: */*
+
+Jul 13, 2021 4:13:12 PM org.apache.http.client.protocol.ResponseProcessCookies processCookies
+WARNING: Invalid cookie header: "set-cookie: prov=b3adb70b-1be3-46a0-b5f9-d6c7f249122a; expires=Fri, 01 Jan 2055 00:00:00 GMT; domain=.stackexchange.com; path=/; secure; samesite=none; httponly". Invalid 'expires' attribute: Fri, 01 Jan 2055 00:00:00 GMT
+Jul 13, 2021 4:13:12 PM org.glassfish.jersey.filter.LoggingFilter log
+INFO: 1 * Client response received on thread main
+1 < 200
+1 < access-control-allow-credentials: false
+1 < access-control-allow-methods: GET, POST
+1 < access-control-allow-origin: *
+1 < cache-control: private
+1 < Content-Length: -1
+1 < content-security-policy: upgrade-insecure-requests; frame-ancestors 'self' https://stackexchange.com
+1 < content-type: application/json; charset=utf-8
+1 < date: Tue, 13 Jul 2021 14:13:11 GMT
+1 < set-cookie: prov=b3adb70b-1be3-46a0-b5f9-d6c7f249122a; expires=Fri, 01 Jan 2055 00:00:00 GMT; domain=.stackexchange.com; path=/; secure; samesite=none; httponly
+1 < strict-transport-security: max-age=15552000
+1 < x-content-type-options: nosniff
+1 < x-request-guid: f08c8d69-b805-42c5-8b3d-9a555a509f56
+
+# https://docs.oracle.com/javaee/7/tutorial/jaxrs-client001.htm
+1 < content-encoding: gzip [https://en.wikipedia.org/wiki/List_of_HTTP_header_fields]
+1 < content-length: 398
+GZIP - The type of encoding used on the data. See HTTP compression.
+
+
+## Jersey 1x
+org.glassfish.jersey.logging.LoggingFeature loggingFeature = new org.glassfish.jersey.logging.LoggingFeature(
+		utilLogger, Level.ALL, org.glassfish.jersey.logging.LoggingFeature.Verbosity.PAYLOAD_ANY, 8192);
+WebTarget register = webTarget.register(loggingFeature); // Jersey 1x
+
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-common</artifactId>
+    <version>2.23.2</version>
+</dependency>
+
+------------------------------------------------- System.setProperty("javax.net.debug", "plaintext");
+
+javax.net.ssl|DEBUG|01|main|2021-07-29 16:18:55.348 CEST|SSLCipher.java:1770|Plaintext before ENCRYPTION (
+  0000: 14 00 00 0C 74 7A 77 27   36 19 4E 67 0A D7 FA 09  ....tzw'6.Ng....
+)
+javax.net.ssl|DEBUG|01|main|2021-07-29 16:18:55.445 CEST|SSLCipher.java:1672|Plaintext after DECRYPTION (
+  0000: 14 00 00 0C 19 56 61 ED   09 5F A1 D2 1B 27 D6 DB  .....Va.._...'..
+)
+javax.net.ssl|DEBUG|01|main|2021-07-29 16:18:55.452 CEST|SSLCipher.java:1770|Plaintext before ENCRYPTION (
+	GET /2.2/users/581877?order=desc&sort=reputation&site=stackoverflow HTTP/1.1..Accept: */*..User-Agent: Jersey/2.23.2 (Apache HttpClient 4.5)..Host: api.stackexchange.com..Connection: Keep-Alive..Accept-Encoding: gzip,deflate....
+)
+javax.net.ssl|DEBUG|01|main|2021-07-29 16:18:55.544 CEST|SSLCipher.java:1672|Plaintext after DECRYPTION (
+	HTTP/1.1 200 OK..cache-control: private..content-length: 398..content-type: application/json; charset=utf-8..content-encoding: gzip..strict-transport-security: max-age=15552000..access-control-allow-origin: *..access-control-allow-methods: GET, POST..access-control-allow-credentials: false..x-content-type-options: nosniff..x-request-guid: d10fc105-ebdd-42c5-9161-524f8d3c66c4..set-cookie: prov=3eb142a0-93e2-4a63-938f-d38c2ab39fad; expires=Fri, 01 Jan 2055 00:00:00 GMT; domain=.stackexchange.com; path=/; secure; samesite=none; httponly..content-security-policy: upgrade-insecure-requests; frame-ancestors 'self' https://stackexchange.com..date: Mon, 26 Jul 2021 16:48:45 GMT..............t.Oo.0.....COjc.O,..z.u.b0..v...+..."..t.b...D.H...O0.....'.Q...n../....&.S...g.PK...4..E.....p..J.g.Lhh.....v8..0`.......Fcd$.2..DU.9/...h.'*WY...4...q.iOh..J.V.......Gtt6..........C8.J@...w7.VE^TeU....&.._.l=.&.-.pG.#+.T...cY.N1N...B...q........m".n...L...+`..3.5f..S.Z.,.K.....u....r/......QK%.y......R.... S...F...u.....g%m.4..X.7...o...O.'..............,..n....5...Ty............z...
+)
+
+
+------------------------------------------------- # apache log [DEBUG,ERROR,WARN]
+log4j.logger.org.apache.http=DEBUG
+log4j.logger.org.apache.http.wire=DEBUG
+log4j.logger.org.apache.http.headers=DEBUG

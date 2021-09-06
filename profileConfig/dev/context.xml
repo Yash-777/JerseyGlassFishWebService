@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+
+	<Environment name="dataSourceName" value="jdbc/neonoracle" type="java.lang.String" override="false" />
+	<!-- <Environment name="dataSourceName2" value="jdbc/neonoracle" type="java.lang.String" override="false" /> -->
+
+	<Resource name="jdbc/neonoracle" type="javax.sql.DataSource"
+		username="neon30" password="neon30_dev" url="jdbc:oracle:thin:@(DESCRIPTION=(ENABLE=BROKEN)(ADDRESS=(PROTOCOL=tcp)(PORT=1521)(HOST=neodevoracle001.uniper.onmicrosoft.com))(CONNECT_DATA=(SID=UDNEON)))"
+		driverClassName="oracle.jdbc.driver.OracleDriver" maxTotal="20" maxIdle="10"
+		maxWaitMillis="5000" minEvictableIdleTimeMillis="300000"
+		timeBetweenEvictionRunsMillis="600000" validationInterval="600000"
+		validationQuery="select 1 from dual" testOnBorrow="true" auth="Container"
+		accessToUnderlyingConnectionAllowed="true" />
+
+
+	<!-- 
+	<Resource name="jdbc/neonoracle" type="javax.sql.DataSource"
+		username="neon30" password="frumL$-w99$4" url="jdbc:oracle:thin:@sl02441:1524:NEON2Q"
+		driverClassName="oracle.jdbc.driver.OracleDriver" maxTotal="20" maxIdle="10"
+		maxWaitMillis="5000" validationQuery="select 1 from dual"
+		testOnBorrow="true" auth="Container" />
+	-->
+</Context>

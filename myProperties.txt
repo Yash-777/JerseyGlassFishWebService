@@ -1,0 +1,11 @@
+# https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+
+java.vendor=Acme Software Company
+
+myProperty=Yash777
+
+# javax.net.ssl.SSLHandshakeException: Received fatal alert: protocol_version
+# Stack POST Yash: https://stackoverflow.com/a/49556107/5081877
+# System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+# System.setProperty("javax.net.debug", "all");
+https.protocols=TLSv1,TLSv1.1,TLSv1.2
