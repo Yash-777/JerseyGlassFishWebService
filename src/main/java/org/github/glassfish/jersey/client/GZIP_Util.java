@@ -105,20 +105,19 @@ public class GZIP_Util {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String attachementFile = tempFilePath +
-				//"archive.gz";
-				//"PayLoad.xml.gz";
-				"MailSampleAttachement_20210614_132242.xml.gz";
+		String attachementFile = tempFilePath + "PayLoad.xml.gz";
 		File zipFile_SMTP = new File(attachementFile);
-		/*
-		File textFile = new File(tempFilePath +"SampleText.txt"); // fahrplan_at_tennet_scheduling_eu.cer
-		String zipData = "Gzip compress a single file, and the Tar is collecting files into one archive file";
-		org.apache.commons.io.FileUtils.writeByteArrayToFile(textFile, zipData.getBytes());
+		
+		// Write GZ file
+		File textFile = new File(tempFilePath +"PayLoad.xml");
+		String xmlContentStr = "<tem:Add xmlns:tem=\"http://tempuri.org/\"><tem:intA>2</tem:intA><tem:intB>4</tem:intB></tem:Add>";
+		//String zipData = "Gzip compress a single file, and the Tar is collecting files into one archive file"; // SampleText.txt
+		org.apache.commons.io.FileUtils.writeByteArrayToFile(textFile, xmlContentStr.getBytes());
 		
 		//compressCommons( IOUtils.toInputStream(zipData), null, new FileOutputStream(zipFile_SMTP));
 		compressCommons( new FileInputStream( textFile ), textFile.getName(), new FileOutputStream( zipFile_SMTP ) );
-		*/
 		
+		// Read GZ File
 		FileInputStream fileInputStream = new FileInputStream( zipFile_SMTP );
 		HashMap<String, ByteArrayOutputStream> uncompressedGZIPBytes = unCompressCommons( fileInputStream );
 		System.out.println("Map:"+ uncompressedGZIPBytes);
