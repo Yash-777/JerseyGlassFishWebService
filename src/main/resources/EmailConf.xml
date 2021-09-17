@@ -1,0 +1,21 @@
+<deliveryconfig>
+	<moduleId name="SMTP" />
+	<smtpconfig>
+		<data-content>
+			<from>yashwanth.m@gmail.com</from>
+			<to>yashwanth.m@gmail.com</to>
+			<subject>Test Mail</subject>
+			<body />
+		</data-content>
+		<deliverypath>
+			<relay host="smtpmail.onmicrosoft.com" port="25" />
+		</deliverypath>
+		
+		<security>
+			<sign signerKey="Baeldung.p12" signerKeyPassword="password" />
+			<signModeDetached>true</signModeDetached>
+			<encrypt recipientCert="Baeldung.cer" />
+		</security>
+		
+	</smtpconfig>
+</deliveryconfig>
