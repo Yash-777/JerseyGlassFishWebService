@@ -255,6 +255,12 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException; -->
 </dependency>
 
 <dependency>
+	<groupId>javax.activation</groupId>
+	<artifactId>activation</artifactId>
+	<version>1.1.1</version>
+</dependency>
+
+<dependency>
 	<groupId>org.apache.pdfbox</groupId> 
 	<artifactId>pdfbox</artifactId>
 	<version>2.0.8</version>
@@ -282,11 +288,11 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException; -->
 			<version>r05</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc10</artifactId>
 			<version>19.10.0.0</version>
-		</dependency>
+		</dependency> -->
 		<!-- <dependency> <groupId>org.apache.tomcat</groupId> <artifactId>tomcat-dbcp</artifactId> 
 			<version>9.0.10</version> <scope>provided</scope> </dependency> -->
 
