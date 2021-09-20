@@ -25,17 +25,11 @@ public class SFTP_RemoteFileTransfer {
 	static String sftpHost, sftpUsername, sftpPassword;
 	static int sftpPort;
 
-	// 1=fame-sftp.ud01.f-001.net, 2=22, 3=UD01\W9097, 4=2020+Power-Dispatch, 5=/DFSRoot34000/SPECIAL/TRADING/PowerOps/Schedules/TSO declaration/
 	static {
-		sftpHost = "fame-sftp.ud01.f-001.net";
+		sftpHost = "sftp.dev01.net";
 		sftpPort = 22;
-		sftpUsername = "UD01\\V7913";
-		sftpPassword = "Worldmap@2021";
-		
-		/*sftpHost = "fame-sftp.ud01.f-001.net";
-		sftpPort = 22;
-		sftpUsername = "UD01\\W9097";
-		sftpPassword = "2020+Power-Dispatch";*/
+		sftpUsername = "Dev01\\Y777";
+		sftpPassword = "Yash@2021";
 	}
 	
 	// https://mvnrepository.com/artifact/com.jcraft/jsch/0.1.54
@@ -50,8 +44,7 @@ public class SFTP_RemoteFileTransfer {
 		/*String destinationDir = "C:/Yash/Workplace SVN Branches/NeonDashboard/RemoteFile",
 			archivalDir = "C:/Yash/Workplace SVN Branches/NeonDashboard/RemoteFile/BackUP";*/
 		
-		String destinationDir = "/K-Drive (u-dfs)/Uniper/UIT/PROJECTS/Neon/CR123/", archivalDir = null;
-		//String destinationDir = "/DFSRoot34000/SPECIAL/TRADING/PowerOps/Schedules/TSO declaration/", archivalDir = null;
+		String destinationDir = "/K-Drive (u-dfs)/Yash/sftp/files/", archivalDir = null;
 		
 		copyReportToDestination(fileContent, newFileName, destinationDir, archivalDir);
 	}
